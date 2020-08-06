@@ -57,34 +57,12 @@ int Graph::findPersonIndex(string targetID) {
 	return -1;														// If it doesn't exist, then return -1
 }
 
-// Purpose: Helper function to see if person address exists in contactList vector
-bool Graph::wasSeen(bool seen, Person* target) {
-	// TODO: scan through the array and see if the target was found, I'll probably delete this later
-	return false;
-}
-
 int Graph::count_virus_positive_contacts(string person_id) {
-
-	/*
-	NOTE:
-	Below is my attempt to get the graph traversal working
-	Basically just choosing some starting point, moving to a different node and keeping track of the unused paths, and if the person
-		in the node is positive, increment some total virus counter. Once everything's scanned, return the total positive tests.
-	I'm too tired rn to get it working, I'll have another crack in the morning with a fresh mind and some coffee :)
-	Try it out and see if you can get something together, if not dw I'll handle it
-	Other than this there's still the "find_largest_cluster_with_two_positive" function and we need to get some test cases together,
-		maybe have a stab at those as well
-	
-	Lol imma head off to sleep for now
-
-	-Sam
-	*/
-
-
 	Person* personAddress = populationList.at(findPersonIndex(person_id));	// Get root person's address via their ID
 	// Do breadth-first graph traversal
-	bool seen = new bool[populationList.size()];					// Initialize list of people that have been scanned for positive cases
-	seen = { false };												// Currently none have been scanned, so everything's false
+	int numPositive = 0;
+	const int listLength = populationList.size();
+	vector<bool> seen(listLength, false);							// Keep track of who's been scanned
 	queue<Person*> toVisit;											// Queue of people who haven't been scanned yet
 
 	toVisit.push(personAddress);									// Add the first person to to-visit queue
@@ -93,12 +71,17 @@ int Graph::count_virus_positive_contacts(string person_id) {
 	Person* curPerson = toVisit.front();										// Copy front of queue to temp address
 	toVisit.pop();																// And remove from queue
 
-		for (int index; index < curPerson->contactList.size(); index++) {		// Going through this person's contact list
+		for (int index = 0; index < curPerson->contactList.size(); index++) {		// Going through this person's contact list
 			Person* personAtIndex = curPerson->contactList.at(index).contact;
-			if (!wasSeen(seen, personAtIndex)) {								// TODO: <-
-				toVisit.push(personAtIndex);									//       <- gotta fix these lines later lol
-				seen[index] = true;												//       <-
+			int personIndex = findPersonIndex(personAtIndex->ID);
+			if (seen.at(personIndex) == false) {								// If the person hasn't been scanned yet, then
+				toVisit.push(personAtIndex);									// Add them to the toVisit list
+				seen.at(personIndex) = true;
+
+				if (personAtIndex->testResult == true)							// If person tested positive,
+					numPositive++;												//	increase positive case count
 			}
 		}
 	}
+	return numPositive;
 }

@@ -12,18 +12,20 @@ string get_status_str(bool status) {
 int main() {
 	GraphTest final_assignment_tests;
 
-	const int numTests = 2;
+	const int numTests = 3;
 
 	// Store test descriptions
 	string test_description[numTests] = {
 		"Test1: Add some people",
-		"Test2: Add 2 people and an edge"
+		"Test2: Add 2 people and an edge",
+		"Test3: Count positive cases"
 	};
 
 	// Conduct the tests
 	bool test_results[numTests];
 	test_results[0] = final_assignment_tests.test1();
 	test_results[1] = final_assignment_tests.test2();
+	test_results[2] = final_assignment_tests.test3();
 
 	// Print Graph ADT test results to console
 	cout << "CONTACT TRACING TEST RESULTS" << endl;

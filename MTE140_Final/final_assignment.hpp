@@ -77,8 +77,6 @@ public:
 	int findPersonIndex(string targetID);
 
 	// STEP 2:
-	// Purpose: Helper function to see if person address exists in contactList vector
-	bool wasSeen(bool seen, Person* target);
 	// Purpose: Count number of individuals contacted who tested positive
 	int count_virus_positive_contacts(string person_id);
 };
