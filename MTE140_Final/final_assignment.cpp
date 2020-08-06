@@ -59,7 +59,7 @@ int Graph::findPersonIndex(string targetID) {
 
 int Graph::count_virus_positive_contacts(string person_id) {
 	Person* personAddress = populationList.at(findPersonIndex(person_id));	// Get root person's address via their ID
-	// Do breadth-first graph traversal
+	// Do breadth-first graph traversal for person's node
 	int numPositive = 0;
 	const int listLength = populationList.size();
 	vector<bool> seen(listLength, false);							// Keep track of who's been scanned
@@ -84,4 +84,65 @@ int Graph::count_virus_positive_contacts(string person_id) {
 		}
 	}
 	return numPositive;
+}
+
+// Purpose: Find the maximum cluster size of virus-positive contacts
+int Graph::find_largest_cluster_with_two_positive() {
+	int largestCluster = 0;
+	int curCluster = 0;
+	int curPositive = 0;
+
+	Person* personAddress = populationList.at(0);			// Find address of some person to start with
+	const int listLength = populationList.size();
+	vector<bool> seen(listLength, false);					// Keep track of who's been scanned
+	queue<Person*> toVisit;									// Queue of people who haven't been scanned yet
+
+	toVisit.push(personAddress);							// Add the first person to to-visit queue
+
+	while (falseExists(seen) != -1) {
+
+		while (!toVisit.empty()) {													// While there are still people to visit
+			Person* curPerson = toVisit.front();									// Copy front of queue to temp address
+			toVisit.pop();															// And remove from queue
+
+			for (int index = 0; index < curPerson->contactList.size(); index++) {	// Going through this person's contact list
+				Person* personAtIndex = curPerson->contactList.at(index).contact;
+				int personIndex = findPersonIndex(personAtIndex->ID);
+				if (seen.at(personIndex) == false) {								// If the person hasn't been scanned yet, then
+					toVisit.push(personAtIndex);									// Add them to the toVisit list
+					seen.at(personIndex) = true;									// Mark person as seen
+
+					curCluster++;													// Keep track of total contacts in current cluster
+					if (personAtIndex->testResult == true)							// If this person has tested positive,
+						curPositive++;												//	keep track of it
+				}
+			}
+		}
+
+		if (curPositive >= 2) {
+			if (curCluster > largestCluster)
+				largestCluster = curCluster;
+		}
+
+		curCluster = 0;
+		curPositive = 0;
+
+		// Once the cluster has been fully scanned, check if there are other clusters
+		if (falseExists(seen) != -1) {												// If there is still an unscanned person,
+			toVisit.push(populationList.at(falseExists(seen)));						//	then add to queue and start again
+			seen.at(falseExists(seen)) = true;										//	and mark as visited
+		}									
+	}
+	cout << largestCluster << endl;
+	return largestCluster;
+}
+
+// Purpose: Helper function to see if there are unscanned clusters
+int Graph::falseExists(const vector<bool> seen) {
+	for (int index = 0; index < seen.size(); index++) {
+		if (seen.at(index) == false) {
+			return index;
+		}			
+	}
+	return -1;
 }

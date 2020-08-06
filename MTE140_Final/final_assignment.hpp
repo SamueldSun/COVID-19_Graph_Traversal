@@ -79,6 +79,13 @@ public:
 	// STEP 2:
 	// Purpose: Count number of individuals contacted who tested positive
 	int count_virus_positive_contacts(string person_id);
+
+	// STEP3;
+	// Purpose: Find the maximum cluster size of virus-positive contacts
+	int find_largest_cluster_with_two_positive();
+
+	// Purpose: Helper function to see if there are unscanned clusters
+	int falseExists(vector<bool> seen);
 };
 
 
